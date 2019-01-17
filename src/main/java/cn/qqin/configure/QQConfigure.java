@@ -1,0 +1,44 @@
+package cn.qqin.configure;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.security.SpringSocialConfigurer;
+import org.springframework.stereotype.Component;
+
+/**
+ * @Author:cgz
+ * @Description:
+ * @Date: create in 15:58 2019/1/14
+ * @Version:
+ * @Modified by:
+ */
+@Configuration
+public class QQConfigure  extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    SpringSocialConfigurer springSocialConfigurer;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.formLogin().loginPage("/test.html").permitAll()
+                .and().authorizeRequests().antMatchers("/callback/qq","/code/*","/signUp.html","/signUp","/regist")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .cors()
+                .and()
+                .apply(springSocialConfigurer)
+                .and()
+                .csrf().disable();
+
+    }
+}
